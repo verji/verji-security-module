@@ -1,11 +1,11 @@
 {
-  "name": "@vector-im/element-web-ilag-module",
-  "version": "0.0.4",
-  "description": "Demo module for Element Web",
-  "main": "lib/IlagModule.js",
-  "types": "lib/IlagModule.d.ts",
-  "repository": "git@github.com:vector-im/element-web-ilag-module.git",
-  "author": "New Vector Ltd t/a Element",
+  "name": "@verji/verji-security-module",
+  "version": "0.0.1",
+  "description": "Verji Security Modulefor Element Web",
+  "main": "lib/VerjiSecurityModule.js",
+  "types": "lib/VerjiSecurityModule.d.ts",
+  "repository": "git@github.com:verji/verji-security-module.git",
+  "author": "Verji Tech AS",
   "license": "Apache-2.0",
   "files": [
     "lib",
@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "@matrix-org/react-sdk-module-api": "^1.0.0",
+    "@matrix-org/react-sdk-module-api": "^2.2.1",
     "string-template": "^1.0.0"
   }
 }

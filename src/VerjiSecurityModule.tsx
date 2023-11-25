@@ -20,14 +20,18 @@ import { ModuleApi } from "@matrix-org/react-sdk-module-api/lib/ModuleApi";
 import {
     JoinFromPreviewListener,
     RoomPreviewListener,
+    ViewRoomListener,
     RoomViewLifecycle,
 } from "@matrix-org/react-sdk-module-api/lib/lifecycles/RoomViewLifecycle";
+
 import { DialogProps } from "@matrix-org/react-sdk-module-api/lib/components/DialogContent";
 
 import { AskNameDialog, AccountModel } from "./components/AskNameDialog";
 
-export default class IlagModule extends RuntimeModule {
+
+export default class VerjiSecurityModule extends RuntimeModule {
     public constructor(moduleApi: ModuleApi) {
+
         super(moduleApi);
 
         this.moduleApi.registerTranslations({
@@ -39,13 +43,31 @@ export default class IlagModule extends RuntimeModule {
 
         this.on(RoomViewLifecycle.PreviewRoomNotLoggedIn, this.onRoomPreviewBar);
         this.on(RoomViewLifecycle.JoinFromRoomPreview, this.onTryJoin);
+        this.on(RoomViewLifecycle.ViewRoom, this.onViewRoom);
     }
 
     protected onRoomPreviewBar: RoomPreviewListener = (opts, roomId) => {
         opts.canJoin = true; // don't show login/signup options - use "join now" language
     };
 
+    protected onViewRoom: ViewRoomListener = (opts, roomId) => {
+        console.log(`Changing room => ${roomId}`)
+        console.log("args =>",  opts)
+
+        this.moduleApi.openDialog<AccountModel, DialogProps, AskNameDialog>(
+            this.t("Welcome! Enter your name to join"),
+            (props, ref) => <AskNameDialog ref={ref} {...props} />,
+        ).then(async ({ didOkOrSubmit, model }) => {
+            if (!didOkOrSubmit) return;
+
+            await this.moduleApi.overwriteAccountAuth(model.creds);
+            await this.moduleApi.navigatePermalink(`https://matrix.to/#/${roomId}`, true);
+        });
+    };
+
+
     protected onTryJoin: JoinFromPreviewListener = (roomId) => {
+
         this.moduleApi.openDialog<AccountModel, DialogProps, AskNameDialog>(
             this.t("Welcome! Enter your name to join"),
             (props, ref) => <AskNameDialog ref={ref} {...props} />,
