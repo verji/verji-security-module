@@ -1,81 +1,43 @@
 /*
-Copyright 2022 New Vector Ltd. t/a Element
+Copyright 2022 Verji Tech AS
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 */
 
-import React from "react";
 import { RuntimeModule } from "@matrix-org/react-sdk-module-api/lib/RuntimeModule";
 import { ModuleApi } from "@matrix-org/react-sdk-module-api/lib/ModuleApi";
 import {
-    JoinFromPreviewListener,
-    RoomPreviewListener,
-    ViewRoomListener,
-    RoomViewLifecycle,
-} from "@matrix-org/react-sdk-module-api/lib/lifecycles/RoomViewLifecycle";
+    SecurityLifecycle,
+    ExamineLoginResponseListener,
+    SecurityExtensionMethods
+} from "@matrix-org/react-sdk-module-api/lib/lifecycles/SecurityLifecycle";
 
-import { DialogProps } from "@matrix-org/react-sdk-module-api/lib/components/DialogContent";
-
-import { AskNameDialog, AccountModel } from "./components/AskNameDialog";
-
+// import { 
+//     FetcherTypes,
+//     ValueFetcher,
+//     ValueFetcherResult 
+// } from "@matrix-org/react-sdk-module-api/lib/lifecycles/types";
 
 export default class VerjiSecurityModule extends RuntimeModule {
+
+    //public override fetchers = new Map<FetcherTypes, ValueFetcher<ValueFetcherResult>>();
+
     public constructor(moduleApi: ModuleApi) {
 
         super(moduleApi);
 
-        this.moduleApi.registerTranslations({
-            "Creating your account...": {en: "Creating your account..."},
-            "First name": {en: "First name"},
-            "Last name": {en: "Last name"},
-            "Welcome! Enter your name to join": {en: "Welcome! Enter your name to join"},
-        });
+        // Register handlers for events raised by ModuleRunner.invoke()
+        this.on(SecurityLifecycle.ExamineLoginResponse, this.onExamineLoginResponse);
 
-        this.on(RoomViewLifecycle.PreviewRoomNotLoggedIn, this.onRoomPreviewBar);
-        this.on(RoomViewLifecycle.JoinFromRoomPreview, this.onTryJoin);
-        this.on(RoomViewLifecycle.ViewRoom, this.onViewRoom);
+        // Expose methods which shall be reachable by ModuleRunner.invokeMethod()
+        this.fetchers.set(SecurityExtensionMethods.GetSecretStorageKey, this.getSecretStorageKey)
     }
 
-    protected onRoomPreviewBar: RoomPreviewListener = (opts, roomId) => {
-        opts.canJoin = true; // don't show login/signup options - use "join now" language
+    protected onExamineLoginResponse: ExamineLoginResponseListener = (loginResponse, cred) => {
+        console.log("Examining login response", loginResponse, cred)
     };
 
-    protected onViewRoom: ViewRoomListener = (opts, roomId) => {
-        console.log(`Changing room => ${roomId}`)
-        console.log("args =>",  opts)
-
-        this.moduleApi.openDialog<AccountModel, DialogProps, AskNameDialog>(
-            this.t("Welcome! Enter your name to join"),
-            (props, ref) => <AskNameDialog ref={ref} {...props} />,
-        ).then(async ({ didOkOrSubmit, model }) => {
-            if (!didOkOrSubmit) return;
-
-            await this.moduleApi.overwriteAccountAuth(model.creds);
-            await this.moduleApi.navigatePermalink(`https://matrix.to/#/${roomId}`, true);
-        });
-    };
-
-
-    protected onTryJoin: JoinFromPreviewListener = (roomId) => {
-
-        this.moduleApi.openDialog<AccountModel, DialogProps, AskNameDialog>(
-            this.t("Welcome! Enter your name to join"),
-            (props, ref) => <AskNameDialog ref={ref} {...props} />,
-        ).then(async ({ didOkOrSubmit, model }) => {
-            if (!didOkOrSubmit) return;
-
-            await this.moduleApi.overwriteAccountAuth(model.creds);
-            await this.moduleApi.navigatePermalink(`https://matrix.to/#/${roomId}`, true);
-        });
+    public getSecretStorageKey(args:any): string {
+        console.log(`verji getSecretStorageKey(): with args = , ${args}`)
+        return "verji getSecretStorageKey";
     };
 }
