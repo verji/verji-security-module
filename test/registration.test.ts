@@ -16,16 +16,16 @@ limitations under the License.
 
 import { ModuleApi } from "@matrix-org/react-sdk-module-api/lib/ModuleApi";
 
-import { registerAccount } from "../src/components/AskNameDialog";
+//import { registerAccount } from "../src/components/AskNameDialog";
 
-Object.defineProperty(globalThis, 'crypto', {
-    value: {
-        getRandomValues<T extends ArrayBufferView | null>(array: T): T {
-            // no-op to ensure repeatable randomness
-            return array;
-        },
-    },
-});
+// Object.defineProperty(globalThis, 'crypto', {
+//     value: {
+//         getRandomValues<T extends ArrayBufferView | null>(array: T): T {
+//             // no-op to ensure repeatable randomness
+//             return array;
+//         },
+//     },
+// });
 
 type MockedModuleApi = {
     [key in keyof ModuleApi]: jest.MockedFunction<ModuleApi[key]>
