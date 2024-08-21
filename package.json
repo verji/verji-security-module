@@ -1,6 +1,6 @@
 {
   "name": "@verji/verji-usersearch-module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Verji User Search Customization for Element Web",
   "main": "lib/VerjiSecurityModule.js",
   "types": "lib/VerjiSecurityModule.d.ts",
