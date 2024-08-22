@@ -1,12 +1,12 @@
 {
-  "name": "@verji/verji-usersearch-module",
-  "version": "0.0.15",
-  "description": "Verji User Search Customization for Element Web",
-  "main": "lib/VerjiUserSearchModule.js",
-  "types": "lib/VerjiUserSearchModule.d.ts",
-  "repository": "git@github.com:verji/verji-usersearch-module.git",
+  "name": "@verji/verji-security-module",
+  "version": "0.0.2",
+  "description": "Verji Security Modulefor Element Web",
+  "main": "lib/VerjiSecurityModule.js",
+  "types": "lib/VerjiSecurityModule.d.ts",
+  "repository": "git@github.com:verji/verji-security-module.git",
   "author": "Verji Tech AS",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "files": [
     "lib",
     "README.md",
@@ -24,10 +24,6 @@
     "lint": "eslint src test && tsc --noEmit",
     "lint:fix": "eslint --fix src test",
     "prepublishOnly": "yarn build"
-  },
-  "resolutions": {
-    "@types/react-dom": "17.0.25",
-    "@types/react": "17.0.80"
   },
   "devDependencies": {
     "@action-validator/cli": "^0.5.3",
