@@ -9,12 +9,15 @@ import { ModuleApi } from "@matrix-org/react-sdk-module-api/lib/ModuleApi";
 import { 
     UserSearchExtensionsBase, 
     SearchContext,
-    SdkContextClass 
-} from "@matrix-org/react-sdk-module-api/lib/lifecycles/UserSearchExtensions";
+    SdkContextClassProjection 
+} from "@matrix-org/react-sdk-module-api/lib/extensions/UserSearchExtensions";
+
+
+const EventTypeTenantInfo = "app.verji.tenant_info";
 
 export class VerjiUserSearchExtensions extends UserSearchExtensionsBase {
 
-    public async getSearchContext(client: any, sdkContextClass: SdkContextClass): Promise<SearchContext> {
+    public async getSearchContext(client: any, sdkContextClass: SdkContextClassProjection): Promise<SearchContext> {
        
         const spaceRoomId = sdkContextClass.spaceStore.activeSpaceRoom?.roomId as string;
         const roomId =  sdkContextClass.roomViewStore.getRoomId() as string;
@@ -22,10 +25,9 @@ export class VerjiUserSearchExtensions extends UserSearchExtensionsBase {
         const finalRoomId = spaceRoomId ?? roomId;
         let tenantId = null;
 
-
         try {
             // Try to derive tenantId directly
-            const event = await client.getStateEvent(finalRoomId as string, "app.verji.tenant_info", "app.verji.tenant_info");
+            const event = await client.getStateEvent(finalRoomId as string, EventTypeTenantInfo, EventTypeTenantInfo);
             tenantId = event["tenant_id"];
         }
         catch{
@@ -38,7 +40,7 @@ export class VerjiUserSearchExtensions extends UserSearchExtensionsBase {
                 space_id: spaceRoomId,
                 room_id: roomId
             },
-            extraRequestOptions: {
+            extraRequestOptions: {          // Ensure we request CORS headers in the OPTIONS call
                 headers: {
                     "Access-Control-Request-Headers": "authorization,content-type",
                     "Access-Control-Request-Method": "POST"
